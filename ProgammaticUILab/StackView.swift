@@ -35,7 +35,7 @@ class StackView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
 }
