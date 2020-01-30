@@ -16,22 +16,25 @@ class View: UIView {
     }()
     
     public lazy var stackView: UIStackView = {
-        let SV = UIStackView()
+        let SV = UIStackView(arrangedSubviews: [redButton, greenButton, blueButton])
         SV.backgroundColor = .lightGray
         return SV
     }()
     
     public lazy var redButton: UIButton = {
         let red = UIButton()
+        
         red.backgroundColor = .red
         red.layer.cornerRadius = 0.5 * red.bounds.size.width
+        red.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return red
     }()
     
     public lazy var greenButton: UIButton = {
         let green = UIButton()
-        green.backgroundColor = .red
+        green.backgroundColor = .green
         green.layer.cornerRadius = 0.5 * green.bounds.size.width
+        green.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return green
     }()
     
@@ -39,9 +42,19 @@ class View: UIView {
         let blue = UIButton()
         blue.backgroundColor = .blue
         blue.layer.cornerRadius = 0.5 * blue.bounds.size.width
+        blue.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return blue
     }()
     
+    public lazy var resetButton: UIButton = {
+        let reset = UIButton()
+        reset.backgroundColor = .lightGray
+        reset.layer.cornerRadius = 0.5 * reset.bounds.size.width
+        return reset
+    }()
+    
+    var currentScore = 0
+    var finalScore = 0
     var randomRed: CGFloat = 0.0
     var randomGreen: CGFloat = 0.0
     var randomBlue: CGFloat = 0.0
@@ -50,19 +63,18 @@ class View: UIView {
     override init(frame: CGRect) {
         super.init(frame: UIScreen.main.bounds)
         commonInit()
-        generateRandomColor()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         commonInit()
-        generateRandomColor()
+        
     }
     
     private func commonInit() {
         setUpView()
+        generateRandomColor()
         setUpStackView()
-        setUpButtons()
     }
     
     private func setUpView() {
@@ -81,6 +93,7 @@ class View: UIView {
     private func setUpStackView() {
         addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 100
         
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -88,17 +101,57 @@ class View: UIView {
         ])
     }
     
-    private func setUpButtons() {
-        addSubview(redButton)
-        addSubview(greenButton)
-        addSubview(blueButton)
-        redButton.translatesAutoresizingMaskIntoConstraints = false
-        greenButton.translatesAutoresizingMaskIntoConstraints = false
-        blueButton.translatesAutoresizingMaskIntoConstraints = false
+    private func setUpResetButton() {
+        addSubview(resetButton)
+        resetButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            
+            resetButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            resetButton.topAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 50)
         ])
+    }
+    
+    @objc private func buttonPressed(_ sender: UIButton) {
+        switch sender.tag {
+        case 1:
+            if emptyColorArr[0] == emptyColorArr.max() ?? 0.1 {
+                currentScore += 1
+                emptyColorArr = []
+                generateRandomColor()
+            } else {
+                currentScore = finalScore
+                setUpResetButton()
+                redButton.isEnabled = false
+                greenButton.isEnabled = false
+                blueButton.isEnabled = false
+            }
+        case 2:
+            if emptyColorArr[1] == emptyColorArr.max() ?? 0.1 {
+                currentScore += 1
+                emptyColorArr = []
+                generateRandomColor()
+            } else {
+                currentScore = finalScore
+                setUpResetButton()
+                redButton.isEnabled = false
+                greenButton.isEnabled = false
+                blueButton.isEnabled = false
+            }
+        case 3:
+            if emptyColorArr[2] == emptyColorArr.max() ?? 0.1 {
+                currentScore += 1
+                emptyColorArr = []
+                generateRandomColor()
+            } else {
+                currentScore = finalScore
+                setUpResetButton()
+                redButton.isEnabled = false
+                greenButton.isEnabled = false
+                blueButton.isEnabled = false
+            }
+        default:
+            print("wrong")
+        }
     }
     
     private func generateRandomColor() {
