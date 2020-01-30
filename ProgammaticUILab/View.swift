@@ -12,6 +12,7 @@ class View: UIView {
     
     public lazy var colorView: UIView = {
         let colorView = UIView()
+        colorView.layer.cornerRadius = 10
         return colorView
     }()
     
@@ -25,7 +26,9 @@ class View: UIView {
         let red = UIButton()
         red.tag = 0
         red.backgroundColor = .red
+        red.frame = CGRect(x: 160, y: 100, width: 20, height: 20)
         red.layer.cornerRadius = 0.5 * red.bounds.size.width
+        red.clipsToBounds = true
         red.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return red
     }()
@@ -34,7 +37,9 @@ class View: UIView {
         let green = UIButton()
         green.tag = 1
         green.backgroundColor = .green
+        green.frame = CGRect(x: 160, y: 100, width: 20, height: 20)
         green.layer.cornerRadius = 0.5 * green.bounds.size.width
+        green.clipsToBounds = true
         green.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return green
     }()
@@ -43,16 +48,21 @@ class View: UIView {
         let blue = UIButton()
         blue.tag = 2
         blue.backgroundColor = .blue
+        blue.frame = CGRect(x: 160, y: 100, width: 20, height: 20)
         blue.layer.cornerRadius = 0.5 * blue.bounds.size.width
+        blue.clipsToBounds = true
         blue.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         return blue
     }()
     
     public lazy var resetButton: UIButton = {
         let reset = UIButton()
-        reset.backgroundColor = .lightGray
+        reset.layer.borderWidth = 0.5
+        reset.frame = CGRect(x: 160, y: 100, width: 20, height: 20)
         reset.layer.cornerRadius = 0.5 * reset.bounds.size.width
+        reset.clipsToBounds = true
         reset.setTitle("Reset", for: .normal)
+        reset.setTitleColor(.black, for: .normal)
         reset.addTarget(self, action: #selector(resetButtonPressed(_:)), for: .touchUpInside)
         return reset
     }()
@@ -97,7 +107,7 @@ class View: UIView {
         colorView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            colorView.topAnchor.constraint(equalTo: topAnchor, constant: 100),
+            colorView.topAnchor.constraint(equalTo: topAnchor, constant: 130),
             colorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             colorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             colorView.heightAnchor.constraint(equalToConstant: 400),
@@ -146,6 +156,17 @@ class View: UIView {
         ])
     }
     
+    @objc private func resetButtonPressed(_ sender: UIButton) {
+        emptyColorArr = []
+        generateRandomColor()
+        currentScore = 0
+        finalScore = currentScore
+        messageLabel.text = nil
+        redButton.isEnabled = true
+        greenButton.isEnabled = true
+        blueButton.isEnabled = true
+    }
+    
     @objc private func buttonPressed(_ sender: UIButton) {
         switch sender.tag {
         case 0:
@@ -161,7 +182,8 @@ class View: UIView {
                 redButton.isEnabled = false
                 greenButton.isEnabled = false
                 blueButton.isEnabled = false
-                messageLabel.text = "You Lost DUDE!"
+                setUpMessageLabel()
+                messageLabel.text = "You Lost DUDE! Reset the game to continue!"
                 setUpResetButton()
             }
         case 1:
@@ -170,7 +192,6 @@ class View: UIView {
                 scoreLabel.text = "Score: \(currentScore)"
                 emptyColorArr = []
                 generateRandomColor()
-                print("yes")
             } else {
                 currentScore = finalScore
                 scoreLabel.text = "Score: \(currentScore)"
@@ -178,7 +199,8 @@ class View: UIView {
                 redButton.isEnabled = false
                 greenButton.isEnabled = false
                 blueButton.isEnabled = false
-                messageLabel.text = "You Lost DUDE!"
+                setUpMessageLabel()
+                messageLabel.text = "You Lost DUDE! Reset the game to continue!"
                 setUpResetButton()
             }
         case 2:
@@ -187,7 +209,6 @@ class View: UIView {
                 scoreLabel.text = "Score: \(currentScore)"
                 emptyColorArr = []
                 generateRandomColor()
-                print("yes")
             } else {
                 currentScore = finalScore
                 scoreLabel.text = "Score: \(currentScore)"
@@ -195,22 +216,13 @@ class View: UIView {
                 redButton.isEnabled = false
                 greenButton.isEnabled = false
                 blueButton.isEnabled = false
-                messageLabel.text = "You Lost DUDE!"
+                setUpMessageLabel()
+                messageLabel.text = "You Lost DUDE! Reset the game to continue!"
                 setUpResetButton()
             }
         default:
             print("wrong")
         }
-    }
-    
-    @objc private func resetButtonPressed(_ sender: UIButton) {
-        generateRandomColor()
-        currentScore = 0
-        emptyColorArr = []
-        finalScore = currentScore
-        redButton.isEnabled = true
-        greenButton.isEnabled = true
-        blueButton.isEnabled = true
     }
     
     private func generateRandomColor() {
